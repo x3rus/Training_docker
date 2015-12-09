@@ -7,4 +7,4 @@
 # Licence : GPL v3.
 ###############################################################################
 
-docker build -t linux202:ubuntu_base .
+docker build -t linux202:base .

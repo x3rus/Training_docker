@@ -14,7 +14,7 @@ DOCKER_DIR=$HOME/Linux202/
 DOCKER_DIR_tmp=$HOME/Linux202/tmp
 GITHUB_DOCKERS=https://github.com/x3rus/Training_docker.git
 GITCLONE_DOCKERS=$DOCKER_DIR/Training_docker
-GIT_LAST_COMMIT="0069a2b2b097a217b6aa1b631d1af29ee48e2430" #extraction git log --pretty=oneline | head -1 | cut -d " " -f 1
+GIT_LAST_COMMIT="dc2eeee47517aa3af43a8254339eac75c09fcaa5" #extraction git log --pretty=oneline | head -1 | cut -d " " -f 1
 CONTAINER_X3="x3rus/linux202:base" 
 
 VERBOSE=0
@@ -308,5 +308,6 @@ if [ $? -ne 0 ] ;then
     exit 1
 fi
 
+f_show_msg "info" "TERMINE"
 
 exit 0
