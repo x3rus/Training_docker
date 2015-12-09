@@ -15,7 +15,7 @@ DOCKER_DIR_tmp=$HOME/Linux202/tmp
 GITHUB_DOCKERS=https://github.com/x3rus/Training_docker.git
 GITCLONE_DOCKERS=$DOCKER_DIR/Training_docker
 GIT_LAST_COMMIT="0069a2b2b097a217b6aa1b631d1af29ee48e2430" #extraction git log --pretty=oneline | head -1 | cut -d " " -f 1
-CONTAINER_X3="x3rus/linux202" 
+CONTAINER_X3="x3rus/linux202:base" 
 
 VERBOSE=0
 DEBUG=0
@@ -126,7 +126,6 @@ f_clone_docker_training() {
     ORIGNAL_DIR=$PWD
     if [ -d $GITCLONE_DOCKERS ] ;then
         cd $GITCLONE_DOCKERS
-        # TODO a completer ICI le script !! 
         git status
         if [ $? -ne 0 ]; then 
             # Le repertoire existe mais git status fonctionne pas nous allons essayer de le supprimer et faire
@@ -197,6 +196,29 @@ f_pull_container(){
 
 } # FIN f_pull_container
 
+f_clean_up_tmp(){
+
+    # Validation que la variable n'est pas vide 
+    if [ ! -z $DOCKER_DIR_tmp ] ;then
+        # Validation que la variable fut pas definie au repertoire de l'utilisateur HOME
+        # ceci risquerai de tout supprimer les fichiers de l'utilisateur
+        if [ $DOCKER_DIR_tmp != $HOME ] ; then
+            rm -rf $DOCKER_DIR_tmp
+            return 0
+        else
+            f_show_msg "info" "Woww la variable \$DOCKER_DIR_tmp est assigné au HOME de l'utilisateur"
+            f_show_msg "info" "C'est passer a 2 doigts de tout supprimer ... "
+            return 1
+        fi
+    else
+        f_show_msg "error" 'La variable $DOCKER_DIR_tmp est vide ceci est bizarre '
+        return 1
+    fi
+
+    f_show_msg "extrainfo" "clean up de $DOCKER_DIR_tmp realisé "
+    return 0
+
+} # FIN f_clean_up_tmp
 ##########
 ## MAIN ##
 ##########
@@ -274,3 +296,17 @@ if [ $? -ne 0 ] ;then
     exit 1
 fi
 
+######################################
+#      Fin et un petit clean up      #
+######################################
+
+f_show_msg "extrainfo" "On arrive a la fin , un clean up pour terminer"
+
+f_clean_up_tmp 
+if [ $? -ne 0 ] ;then
+    f_show_msg "error" "problème lors de la suppression de fichier temporaire "
+    exit 1
+fi
+
+
+exit 0

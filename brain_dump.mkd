@@ -17,3 +17,9 @@ rechercher dans ma tête l'idée génial que j'avais eu.
     * ce script permettra au personne de creer leur propre container de faire des testes , les sauvegarder et revenir au core par la suite.4. Création d'un script SNAPSHOT
 
 
+# DONE
+
+* compte sur hub.dockers.com
+* push du docker de base : x3rus/linux202 http://hub.docker.com/r/x3rus/
+* image afficher sur docker 200M :D.
+* taille apres install x3rus/linux202:base - 8509d474ff68 - 518.9 MB
