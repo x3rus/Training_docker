@@ -2,7 +2,7 @@ FROM i686/ubuntu
 MAINTAINER Boutry Thomas "thomas.boutry@x3rus.com"
 
 # install apps 
-RUN    apt-get update && DEBIAN_FRONTEND=noninteractive  apt-get install -y vim \
+RUN  apt-get update && DEBIAN_FRONTEND=noninteractive  apt-get install -y vim \
         bc  \
         openssh-server \
         man \
