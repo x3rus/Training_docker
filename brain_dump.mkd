@@ -1,0 +1,19 @@
+# Description
+Juste un fichier pour couché l'idée général dans la tête et pas reperdre un temps inutile a devoir 
+rechercher dans ma tête l'idée génial que j'avais eu.
+
+# Realisation haut niveau
+
+1. Réalisation d'un script pour l'initalisation de l'environnement
+    * Installation de Docker
+    * CheckOut des scripts pour la manipulation des dockers et le DockerFile
+    * Pull le docker de base de la formation x3rus/linux202
+2. Création d'un script RUN 
+    * Le script offrira une manière simple pour lance le container de formation, avec un nom de container pour sauvegarder les operation en coure
+    * est-ce que l'on fait un wraper par dessus SSH et lors du logout on fait un docker diff pour afficher les changements ?
+3. Création d'un script STOP
+    * rendu la je pense pas le choix ,... peut-etre que ce sera plus à ce moment la que l'option d'offrire le listing des difference peut être bien.
+4. Création d'un script SNAPSHOT
+    * ce script permettra au personne de creer leur propre container de faire des testes , les sauvegarder et revenir au core par la suite.4. Création d'un script SNAPSHOT
+
+

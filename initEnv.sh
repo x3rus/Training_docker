@@ -15,6 +15,7 @@ DOCKER_DIR_tmp=$HOME/Linux202/tmp
 GITHUB_DOCKERS=https://github.com/x3rus/Training_docker.git
 GITCLONE_DOCKERS=$DOCKER_DIR/Training_docker
 GIT_LAST_COMMIT="0069a2b2b097a217b6aa1b631d1af29ee48e2430" #extraction git log --pretty=oneline | head -1 | cut -d " " -f 1
+CONTAINER_X3="x3rus/linux202" 
 
 VERBOSE=0
 DEBUG=0
@@ -127,24 +128,74 @@ f_clone_docker_training() {
         cd $GITCLONE_DOCKERS
         # TODO a completer ICI le script !! 
         git status
-        git log --pretty=oneline | head -1 | cut -d " " -f 1
-        cd $ORIGNAL_DIR
-    fi
+        if [ $? -ne 0 ]; then 
+            # Le repertoire existe mais git status fonctionne pas nous allons essayer de le supprimer et faire
+            # le checkout
+            cd ..
+            rmdir $GITCLONE_DOCKERS
+            f_show_msg "debug" "Tentative de suppression du répertoire "
+            if [ $? -ne 0 ] ; then
+                f_show_msg "error" "Répertoire $GITCLONE_DOCKERS existe mais ne contient pas un dépôt "
+                f_show_msg "error" "Le répertoire ne semble pas vide Le script ne peux pas le supprimer"
+                return 1
+            else
+                git clone $GITHUB_DOCKERS $GITCLONE_DOCKERS 
+                if [ $? -ne 0 ] ;then
+                    f_show_msg "error" "Probleme lors de la commande git clone , est-ce que git est installer ??"
+                    f_show_msg "debug" "CMD utilise : git clone $GITHUB_DOCKERS $GITCLONE_DOCKERS "
+                    return 1
+                fi # validatio  git clone
+            fi # validation rmdir $GITCLONE_DOCKERS
+        else # else git status
+            # le repertoire existe et ceci est le repo nous allons valider que nous sommes bien au dernier 
+            # commit 
+            git pull origin master
+            if [ $? -ne 0 ] ;then
+                f_show_msg "error" "Problème lors de la synchronisation avec le dépôt "
+                f_show_msg "debug" " CMD utilise : git pull origin master"
+                return 1
+            fi # git pull origin master
+        fi # git status
 
-    git clone $GITHUB_DOCKERS $GITCLONE_DOCKERS 
+        cd $ORIGNAL_DIR
+    else # else validation repertoire $GITCLONE_DOCKERS
+        git clone $GITHUB_DOCKERS $GITCLONE_DOCKERS 
+        if [ $? -ne 0 ] ;then
+            f_show_msg "error" "Probleme lors de la commande git clone , est-ce que git est installer ??"
+            f_show_msg "debug" "CMD utilise : git clone $GITHUB_DOCKERS $GITCLONE_DOCKERS "
+            return 1
+        fi
+    fi # validation repertoire $GITCLONE_DOCKER
+
+    # validation du commit en place
+    cd $GITCLONE_DOCKERS
+    COMMIT_VERSION=$(git log --pretty=oneline | head -1 | cut -d " " -f 1)
+
+    if [ $COMMIT_VERSION != $GIT_LAST_COMMIT ] ; then
+        f_show_msg "error" "La version utiliser ne correpond pas a celle attendu "
+        f_show_msg "info" "Valider avec le formateur que vous avez la bonne version "
+        return 1
+    fi
+    cd $ORIGNAL_DIR
+
+    return 0
+} # FIN f_clone_docker_training
+
+f_pull_container(){
+    f_show_msg "extrainfo" "pull le container $CONTAINER_X3"
+
+    docker pull $CONTAINER_X3
     if [ $? -ne 0 ] ;then
-        f_show_msg "error" "Probleme lors de la commande git clone , est-ce que git est installer ??"
-        f_show_msg "debug" "CMD utilise : git clone $GITHUB_DOCKERS $GITCLONE_DOCKERS "
+        f_show_msg "error" "probleme  lors de l'extraction du contrainer $CONTAINER_X3"
+        f_show_msg "debug" "CMD utiliser : docker pull $CONTAINER_X3"
         return 1
     fi
 
+    f_show_msg "extrainfo" "La definition de la creation de ce container est disponible dans le repertoire"
+    f_show_msg "extrainfo" " $GITCLONE_DOCKERS/ubuntu-version/Dockerfile"
     return 0
-}
 
-# 1. Installation de Docker
-# 2. Checkout du Docker File
-# 3. Création d'une images de base
-# 4. Checkout des scripts de traitement
+} # FIN f_pull_container
 
 ##########
 ## MAIN ##
@@ -211,3 +262,15 @@ if [ $? -ne 0 ] ;then
     f_show_msg "error" "Problème lors de la récupération des containers et scripts voir avec le formateur"
     exit 1
 fi
+
+######################################
+#       Download le container        #
+######################################
+f_show_msg "extrainfo" "Téléchargement du container "
+
+f_pull_container
+if [ $? -ne 0 ] ;then
+    f_show_msg "error" "Problème lors de la récupération du containers , voir avec le formateur"
+    exit 1
+fi
+
