@@ -22,6 +22,8 @@ from configobj import ConfigObj
 CONF_FILE="./kifu.conf" # conf file 
 DONTASK=0
 
+yes_no_valid = {"yes": True, "y": True, "ye": True, "YES": True,
+             "no": False, "n": False, "NO": False}
 #################
 ##    FUNCS    ##
 def f_query_yes_no(question, default="yes"):
@@ -35,7 +37,7 @@ def f_query_yes_no(question, default="yes"):
     The "answer" return value is True for "yes" or False for "no".
     REF : http://stackoverflow.com/questions/3041986/python-command-line-yes-no-input
     """
-    valid = {"yes": True, "y": True, "ye": True,
+    yes_no_valid = {"yes": True, "y": True, "ye": True,
              "no": False, "n": False}
     if default is None:
         prompt = " [y/n] "
@@ -50,9 +52,9 @@ def f_query_yes_no(question, default="yes"):
         sys.stdout.write(question + prompt)
         choice = input().lower()
         if default is not None and choice == '':
-            return valid[default]
-        elif choice in valid:
-            return valid[choice]
+            return yes_no_valid[default]
+        elif choice in yes_no_valid:
+            return yes_no_valid[choice]
         else:
             sys.stdout.write("Please respond with 'yes' or 'no' "
                              "(or 'y' or 'n').\n")
@@ -74,6 +76,33 @@ def f_search_images(connDockerH,imgName):
     return imgFound
 # END  f_search_images(connDockerH,imgName):
 
+def f_ask_if_we_build(OriImgFound,OriImageName,OriImageBaseTag):
+    """
+        TODO: completer doc fun f_ask_if_we_build
+    """
+
+    if OriImgFound == None :
+        if f_query_yes_no("Do you want build the docker or get one already build on hub.docker.com ?") :
+            return (True,OriImageBaseTag)
+        else:
+            print ("Please use the commande : $ docker pull ", OriImageName , ":", OriImageBaseTag)
+            return (False,OriImageBaseTag)
+    else:
+        print ("With this configuration you will overwrite the image ", OriImageName, ":", OriImageBaseTag, " already on the system ")
+        if f_query_yes_no("Do you want use an other tag ? ") :
+            print ("Enter the new tag to use : ")
+            NewImgTag= input().lower()
+            print ("Thanks so the name will be : ", OriImageName + ":" + NewImgTag)
+            return (True,  NewImgTag)
+        else:
+            if f_query_yes_no("Do you want cancel ? "):
+                print ("Ok we cancel the build ")
+                return (False,OriImageBaseTag)
+            else:
+                print ("Like you want :D ")
+                return (True ,OriImageBaseTag)
+        
+# END f_ask_if_we_build
 
 ##################
 ####   MAIN   ####
@@ -97,19 +126,9 @@ except :
     print (" [ERROR] check the configuration file : ",CONF_FILE ) 
     exit(1)
     
-# dontAsk_validation value # TODO : voir pour changer la methode de validation de dontask voir la function f_query_yes_no
-if dontAsk_raw == "YES" :
-    DONTASK=1
-elif dontAsk_raw == "yes":
-    DONTASK=1
-elif dontAsk_raw == "NO" :
-    DONTASK=0
-elif dontAsk_raw == "no":
-    DONTASK=0
-elif dontAsk_raw == 0:
-    DONTASK=0
-elif dontAsk_raw == 1:
-    DONTASK=0
+# dontAsk_validation value 
+if dontAsk_raw in yes_no_valid: 
+   DONTASK = yes_no_valid[dontAsk_raw]
 
 if not os.path.exists(DockerFilePATH) :
     print (" [ERROR] DockerFile Path don't exist please check it : ", DockerFilePATH)
@@ -125,26 +144,20 @@ if cliDocker == None :
 ImageNameFull=ImageName+":"+ImageBaseTag 
 imgFound = f_search_images(cliDocker,ImageNameFull)
 
-f_ask_if_we_build
-
-# TODO : Avant la function f_ask_if_we_build valider si la valeur DONTASK est present 
-# TODO : mettre ce qui suit en function : ex. (true/false,FinalTagName)=f_ask_if_we_build(ImageName,ImageBaseTag)
-if imgFound == None :
-    if f_query_yes_no("Do you want build the docker or get one already build on hub.docker.com ?") :
-        print ("Let's go to build the new one :D")
-    else:
-        print ("Good Choice :D")
+# If we have something to ask before the build
+if DONTASK == False:
+    (bOk2Build,final_imgTag)=f_ask_if_we_build(imgFound,ImageName,ImageBaseTag) 
 else:
-    print ("With this configuration you will overwrite the image ", ImageName , " already on the system ")
-    if f_query_yes_no("Do you want use an other tag ? ") :
-        print ("Enter the new name to use : ")
-        #TODO a completer pour l'entre du nouveau tag
-    else:
-        if f_query_yes_no("Do you want cancel ? "):
-            print ("Good Choice :D")
-        else:
-            print ("Like you want :D ")
-        
+    (bOk2Build,final_imgTag)=(True,ImageBaseTag)
+
+if bOk2Build :
+    print ("So we build : ", ImageName + ":" + final_imgTag)
+    exit (0)
+else:
+    print (" Stop all")
+    exit (0)
+
+    
 
 
 
