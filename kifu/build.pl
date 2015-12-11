@@ -25,15 +25,29 @@ DONTASK=0
 #################
 ###   FUNCs   ###
 
-def f_searchImagesName(dictImgs,searchImg):
-    for image in dictImgs:
+def f_search_images(connDocker,searchImg):
+    """
+        TODO Ajout doc f_search_images + p-e try / except
+    """
+    dictLstImages = connDocker.images()
+    for image in dictLstImages:
         if image['RepoTags'][0] == searchImg :
             print (" Found : " , image)
             return image
 
     return None
 
-# FIN f_searchImagesName
+# FIN f_search_images(connDocker,searchImg)
+
+def f_connect_dockerhost():
+    """
+        TODO : ajout doc f_connect_dockerhost et p-e validation try / except 
+    """
+    # Connexion a docker
+    conn = docker.Client(version='auto')
+    return conn
+
+# END  f_connect_dockerhost():
 
 #################
 ####   MAIN   ###
@@ -73,13 +87,12 @@ if not os.path.exists(DockerFilePATH) :
     print (" [ERROR] DockerFile Path don't exist please check it : ", DockerFilePATH)
     exit(1)
 
-# Connexion a docker
-cliDocker = docker.Client(version='auto')
+
+cliDocker = f_connect_dockerhost()
 
 # check if images already existe sur le systeme
 # Valider que l'on veut reBuilder l'images car ceci divergera de la version sur hub.docker.com
-dictLstImages = cliDocker.images()
-infoImage = f_searchImagesName(dictLstImages,ContainerName+":"+ContainerBaseTag)
+infoImage = f_search_images(cliDocker,ContainerName+":"+ContainerBaseTag)
 
 if infoImage == None:
     print ("Are you sure you want build a new one or use already created on hub.docker.com ?")
@@ -92,9 +105,9 @@ if infoImage == None:
 #  docker attach test_name_docker
 #  docker ps
 
-lst_container=cliDocker.containers(all=True)
-print ("TOTO " + "=" * 10)
-print (lst_container)
+#lst_container=cliDocker.containers(all=True)
+#print ("TOTO " + "=" * 10)
+#print (lst_container)
 
 # Visualisation des modification
 # docker diff test_name_docker
