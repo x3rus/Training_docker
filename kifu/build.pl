@@ -72,9 +72,12 @@ def f_search_images(connDockerH,imgName):
     """
     imgFound = True
     return imgFound
+# END  f_search_images(connDockerH,imgName):
 
-#################
-####   MAIN   ###
+
+##################
+####   MAIN   ####
+##################
 
 # Load configuration file
 try :
@@ -94,7 +97,7 @@ except :
     print (" [ERROR] check the configuration file : ",CONF_FILE ) 
     exit(1)
     
-# dontAsk_validation value # TODO : voir pour changer la methode de validation de dontask
+# dontAsk_validation value # TODO : voir pour changer la methode de validation de dontask voir la function f_query_yes_no
 if dontAsk_raw == "YES" :
     DONTASK=1
 elif dontAsk_raw == "yes":
@@ -122,6 +125,10 @@ if cliDocker == None :
 ImageNameFull=ImageName+":"+ImageBaseTag 
 imgFound = f_search_images(cliDocker,ImageNameFull)
 
+f_ask_if_we_build
+
+# TODO : Avant la function f_ask_if_we_build valider si la valeur DONTASK est present 
+# TODO : mettre ce qui suit en function : ex. (true/false,FinalTagName)=f_ask_if_we_build(ImageName,ImageBaseTag)
 if imgFound == None :
     if f_query_yes_no("Do you want build the docker or get one already build on hub.docker.com ?") :
         print ("Let's go to build the new one :D")
