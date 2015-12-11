@@ -84,11 +84,31 @@ infoImage = f_searchImagesName(dictLstImages,ContainerName+":"+ContainerBaseTag)
 if infoImage == None:
     print ("Are you sure you want build a new one or use already created on hub.docker.com ?")
 
+# Command use:
+#  docker run -it --name=test_name_docker x3rus/linux202:base bash
+#  docker ps
+#  docker run -it --name=test_name_docker x3rus/linux202:base bash
+#  docker start test_name_docker
+#  docker attach test_name_docker
+#  docker ps
+
+lst_container=cliDocker.containers(all=True)
+print ("TOTO " + "=" * 10)
+print (lst_container)
+
+# Visualisation des modification
+# docker diff test_name_docker
+#
+# C /root
+# A /root/.bash_history
+# A /root/test_name_docker
+
 # TODO ajouter de la validation de realisation 
-ContainerNameFull=ContainerName+":"+ContainerBaseTag
-outputBuild = cliDocker.build(path=DockerFilePATH,tag=ContainerNameFull)
-for line in outputBuild:
-    print (line)
+#ContainerNameFull=ContainerName+":"+ContainerBaseTag
+# !!! BUILD CONTAINER !!!
+#outputBuild = cliDocker.build(path=DockerFilePATH,tag=ContainerNameFull)
+#for line in outputBuild:
+#    print (line)
     
 # TODO: ajouter la restriction avec DONTASK
 #if DONTASK :
