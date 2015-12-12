@@ -64,16 +64,23 @@ def f_connect_dockerhost():
     """
         TODO : f_connect_dockerhost a completer
     """
-    connDockerHost = True
-    return connDockerHost
+    # Connexion a docker
+    conn = docker.Client(version='auto')
+    return conn
+
 # END f_connect_dockerhost() 
 
-def f_search_images(connDockerH,imgName):
+def f_search_images(connDocker,searchImg):
     """
         TODO : f_search_images(connDockerH,imgName)
     """
-    imgFound = True
-    return imgFound
+    dictlstimages = connDocker.images()
+    for image in dictlstimages:
+        if image['RepoTags'][0] == searchImg :
+            return image
+
+    return none
+
 # END  f_search_images(connDockerH,imgName):
 
 def f_ask_if_we_build(OriImgFound,OriImageName,OriImageBaseTag):
