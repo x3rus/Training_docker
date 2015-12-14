@@ -14,6 +14,8 @@
 import sys
 import os.path
 import docker
+import re
+import ast
 from configobj import ConfigObj 
 
 #################
@@ -45,6 +47,8 @@ def f_search_images(connDocker,searchImg):
 def f_connect_dockerhost():
     """
         TODO : ajout doc f_connect_dockerhost et p-e validation try / except 
+
+        TODO : Trapper les exceptions
     """
     # Connexion a docker
     conn = docker.Client(version='auto')
@@ -185,9 +189,16 @@ else:
 
 if bOk2Build :
     print ("So we build : ", ImageName + ":" + final_imgTag)
+    outputBuild = cliDocker.build(path=DockerFilePATH,tag=ImageNameFull)
+    for line in outputBuild:
+        # suppression du output pour n'avoir que le contenu entre { } 
+        reStrLine = re.match(r".*({.*}).*", str(line))
+        # conversion de la string en disctionnaire 
+        dicLine = ast.literal_eval(str(reStrLine.group(1)))
+        print (dicLine["stream"])
     exit (0)
 else:
-    print (" Stop all")
+    print (" Stop th build process ")
     exit (0)
 
     
