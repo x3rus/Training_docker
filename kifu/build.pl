@@ -90,28 +90,6 @@ def f_query_yes_no(question, default="yes"):
                              "(or 'y' or 'n').\n")
 # FIN query_yes_no
 
-def f_connect_dockerhost():
-    """
-        TODO : f_connect_dockerhost a completer
-    """
-    # Connexion a docker
-    conn = docker.Client(version='auto')
-    return conn
-
-# END f_connect_dockerhost() 
-
-def f_search_images(connDocker,searchImg):
-    """
-        TODO : f_search_images(connDockerH,imgName)
-    """
-    dictlstimages = connDocker.images()
-    for image in dictlstimages:
-        if image['RepoTags'][0] == searchImg :
-            return image
-
-    return none
-
-# END  f_search_images(connDockerH,imgName):
 
 def f_ask_if_we_build(OriImgFound,OriImageName,OriImageBaseTag):
     """
