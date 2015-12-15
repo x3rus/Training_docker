@@ -64,7 +64,6 @@ def f_search_container_name(cliDocker,searchContainerName):
         TODO : ajout doc f_search_container_name et p-e validation try / except 
         return (bContainerFound,ContainerID) 
     """
-    # TODO change images pour PS method de docker
     dictLstContainers=cliDocker.containers(all=True)
     for container in dictLstContainers: 
         # Add / to feet with the output :P
@@ -72,27 +71,73 @@ def f_search_container_name(cliDocker,searchContainerName):
             print (" Found : " , container)
             return True,container
 
-    return True,None
+    return False,None
 
 # END f_search_container_name(cliDocker,ContainerName)
 
-def f_ask_name_with_validation(PrefixContainerName):
+def f_ask_name_with_validation(cliDocker,PrefixContainerName):
     """
         TODO : ajout doc pour f_ask_name_with_validation
     """
 
+    bContainerNameIsOK =  False
     # PrefixContainerName = xerus-Linux202_base (exemple)
     print (" Please enter the new container name , the original look like : " + PrefixContainerName + "base")
     print (" You can change the last part _base ")
-    sys.stdout.write(" Please complet the containername : " + PrefixContainerName )
-    SufixContainerName = input().lower()
-    New_containerName = PrefixContainerName + SufixContainerName
+    while bContainerNameIsOK == False:
+        sys.stdout.write(" Please complet the containername : " + PrefixContainerName )
+        SufixContainerName = input().lower()
+        New_containerName = PrefixContainerName + SufixContainerName
+        (bContainerFound,ContainerID) = f_search_container_name(cliDocker,New_containerName)
+        if bContainerNameIsOK :
+            print ("container Name " + New_containerName + " already use try an other one ")
+        else:
+            bContainerNameIsOK = True
     
-    # TODO utiliser f_search_container_name pour voir si le nom existe deja
-    # TODO rajouter une boucle pour faire plusieurs teste si le nom existe deja .... 
-    
+    return New_containerName
+
 # END f_ask_name_with_validation:
 
+def f_select_container(cliDocker,PrefixContainerName):
+    """
+        TODO : ajout doc pour f_select_container 
+    """
+    dictLstContainers=cliDocker.containers(all=True)
+    lstContainer = []
+    for container in dictLstContainers:
+        if PrefixContainerName in container['Names'][0]:
+            myContainer = {}
+            myContainer['Created'] = container['Created']
+            myContainer['Image'] = container['Image']
+            myContainer['Names'] = container['Names'][0]
+            myContainer['Ports'] = container['Ports']
+            myContainer['Status'] = container['Status']
+            lstContainer.append(myContainer)
+
+
+    # TODO : Option de 0 pour annuler :P
+    bNeedSelectMenu = True
+    numContainer=1
+    while bNeedSelectMenu :
+        for oneContainer in lstContainer:
+            # TODO avoir un meilleur formatage 
+            # TODO avoir un visualisation de la date plutot que le unix timestamp
+            # TODO avoir un menu pour les colonnes 
+            print ("["+str(numContainer)+"] "+oneContainer["Image"]+" "+oneContainer["Names"]+
+                   " "+str(oneContainer["Created"])+" "+oneContainer["Status"])
+            numContainer =  numContainer + 1
+        sys.stdout.write(" Please Select the container (0 = CANCEL): " )
+        ContainerNumSelected = input().lower()
+        # TODO : probleme avec la validation car se n'est pas convertie en interger et considere comme string
+        if ContainerNumSelected == 0:
+            bNeedSelectMenu = False
+            return None
+        elif ContainerNumSelected >= 1 and ContainerNumSelected < numContainer  :
+            return lstContainer[numContainer - 1]["Names"]
+
+
+
+# END f_select_container
 ##################
 ####   MAIN   ####
 ##################
@@ -147,10 +192,18 @@ ContainerName=ClientUsername+"-Linux202_"+ImageBaseTag
 # if freshon
 if FRESH_ONE :
     PrefixContainerName=ClientUsername+"-Linux202_"
-    ContainerName=f_ask_name_with_validation(PrefixContainerName)
+    ContainerName=f_ask_name_with_validation(cliDocker,PrefixContainerName)
 
-# TODO :  a valider si refaire une recherche est encore pertinent si on a deja fait la
-# validation dans f_ask_name_with_Validation....
+# If user want select one already created
+if SELECT:
+    PrefixContainerName=ClientUsername+"-Linux202_"
+    ContainerName=f_select_container(cliDocker,PrefixContainerName)
+    if ContainerName == None:
+        print ("You cancel selection ")
+        exit (1)
+    
+# Je conserve la double validation de la presence du container au cas ou le container
+# serai creer par un autre voie entre temps ... 
 (bContainerFound,ContainerID) = f_search_container_name(cliDocker,ContainerName)
 
 if bContainerFound:
