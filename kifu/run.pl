@@ -68,7 +68,6 @@ def f_search_container_name(cliDocker,searchContainerName):
     for container in dictLstContainers: 
         # Add / to feet with the output :P
         if container['Names'][0] == "/"+searchContainerName:
-            print (" Found : " , container)
             return True,container
 
     return False,None
@@ -109,7 +108,7 @@ def f_select_container(cliDocker,PrefixContainerName):
             myContainer = {}
             myContainer['Created'] = container['Created']
             myContainer['Image'] = container['Image']
-            myContainer['Names'] = container['Names'][0]
+            myContainer['Names'] = re.sub('/','',container['Names'][0]) # remove / caractere
             myContainer['Ports'] = container['Ports']
             myContainer['Status'] = container['Status']
             lstContainer.append(myContainer)
@@ -122,22 +121,35 @@ def f_select_container(cliDocker,PrefixContainerName):
         for oneContainer in lstContainer:
             # TODO avoir un meilleur formatage 
             # TODO avoir un visualisation de la date plutot que le unix timestamp
-            # TODO avoir un menu pour les colonnes 
+            # TODO avoir un menu (header) pour les colonnes 
             print ("["+str(numContainer)+"] "+oneContainer["Image"]+" "+oneContainer["Names"]+
                    " "+str(oneContainer["Created"])+" "+oneContainer["Status"])
             numContainer =  numContainer + 1
         sys.stdout.write(" Please Select the container (0 = CANCEL): " )
-        ContainerNumSelected = input().lower()
-        # TODO : probleme avec la validation car se n'est pas convertie en interger et considere comme string
+        ContainerNumSelected = int(input())
         if ContainerNumSelected == 0:
             bNeedSelectMenu = False
             return None
         elif ContainerNumSelected >= 1 and ContainerNumSelected < numContainer  :
-            return lstContainer[numContainer - 1]["Names"]
-
+            return lstContainer[ContainerNumSelected - 1]["Names"]
 
 
 # END f_select_container
+
+def f_get_ipAddr_container(cliDocker,ContainerName):
+    """
+        TODO :  Doc f_get_ipAddr_container 
+    """
+
+    dct_info_container = cliDocker.inspect_container(ContainerName)
+    if dct_info_container == None:
+        print ("Something wierd happen it's seem the container did not start")
+        return None
+    else:
+        return (dct_info_container["NetworkSettings"]["IPAddress"])
+
+# END f_get_ipAddr_container
+
 ##################
 ####   MAIN   ####
 ##################
@@ -216,20 +228,23 @@ if bContainerFound:
 else:
     # TODO ajouter le parametre du port 22 !! 
     container_Linux202 = cliDocker.create_container(image=ImageNameFull,
-                                 hostname=ClientUsername+".x3rus.com",
+                                 hostname=ClientUsername+".example.com",
                                  detach=True,
                                  name=ContainerName,
                              )
     start_output=cliDocker.start(container_Linux202)
 
-print(start_output)
+print ("Start Container name : " + ContainerName + " from img : " + ImageNameFull)
+ContainerIpAdd = f_get_ipAddr_container(cliDocker,ContainerName)
+if ContainerIpAdd:
+    print ("The ip address of the container is : " + ContainerIpAdd)
+    print (" use ssh : ssh bob@" + ContainerIpAdd )
+if start_output:
+    print( " Additional Info : "+ start_output)
 
 ##############
 #### NOTE  ###
 # Gestion de paramètre 
-#   -s == selection des containers dispo
-#   -f == start fresh one 
-#   -o == oneTime
 # Validation des container disponible avec L'image (si option selection)
 # Offire le choix de container a demarrer (si option selection)
 # Demander le nom du container pour l'utilisation future
