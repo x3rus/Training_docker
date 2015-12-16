@@ -41,9 +41,10 @@ def f_usage():
         TODO : Ajout de doc pour f_usage
     """
     print ("Script to start the Docker arguments availables ")
-    print (" run.pl [-s|-f] \n")
+    print (" run.pl [-s|-f] -t \n")
     print (" -s , --select : Select Container already created ")
     print (" -f , --fresh  : start a Fresh one from the original ")
+    print (" -t , --tag : start a container with a specifique Tag [Not yep implemented] ")
 
 # END f_usage()
 
@@ -172,6 +173,9 @@ for opt, arg in opts:
         SELECT=True
     elif opt in ("-f", "--fresh"):
         FRESH_ONE=True
+    elif opt in ("-t", "--tag"):
+        # TODO faire la configuration pour pouvoir demarrer un autre Tag image
+        raise NotImplementedError("Not yep implemented  :P ")
 
 
 # Load configuration file
@@ -222,7 +226,6 @@ if bContainerFound:
     if DONTASK == False:
         #TODO a ajouter
         # ContainerName = f_ask_create_new_container_or_reuse(ContainerID)
-        raise NotImplementedError(" workin progress :P ")
 
     start_output = cliDocker.start(ContainerID)
 else:
@@ -241,17 +244,5 @@ if ContainerIpAdd:
     print (" use ssh : ssh bob@" + ContainerIpAdd )
 if start_output:
     print( " Additional Info : "+ start_output)
-
-##############
-#### NOTE  ###
-# Gestion de paramètre 
-# Validation des container disponible avec L'image (si option selection)
-# Offire le choix de container a demarrer (si option selection)
-# Demander le nom du container pour l'utilisation future
-# (optionel ) definition de port et mountbind
-
-# 1. Demarrage de l'image avec le container username-date
-# 2. Gestion des paramètre
-# 3. SNAPSHOT - autre script
 
 
