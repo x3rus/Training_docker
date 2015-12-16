@@ -54,7 +54,7 @@ def f_connect_dockerhost():
 
 # END  f_connect_dockerhost():
 
-def f_select_container(cliDocker,PrefixContainerName):
+def f_select_container(cliDocker,PrefixContainerName,ShowUpAndDown):
     """
         TODO : ajout doc pour f_select_container 
     """
@@ -62,19 +62,26 @@ def f_select_container(cliDocker,PrefixContainerName):
     lstContainer = []
     for container in dictLstContainers:
         if PrefixContainerName in container['Names'][0]:
-            myContainer = {}
-            myContainer['Created'] = container['Created']
-            myContainer['Image'] = container['Image']
-            myContainer['Names'] = re.sub('/','',container['Names'][0]) # remove / caractere
-            myContainer['Ports'] = container['Ports']
-            myContainer['Status'] = container['Status']
-            lstContainer.append(myContainer)
+                myContainer = {}
+                myContainer['Created'] = container['Created']
+                myContainer['Image'] = container['Image']
+                myContainer['Names'] = re.sub('/','',container['Names'][0]) # remove / caractere
+                myContainer['Ports'] = container['Ports']
+                myContainer['Status'] = container['Status']
+                if not ShowUpAndDown:
+                    if "Up" in container["Status"] or "Pause" in container["Status"]:
+                        lstContainer.append(myContainer)
+                else:
+                        lstContainer.append(myContainer)
 
+    if len(lstContainer) == 0 :
+        print ("No container for Linux202 actually Up or Pause")
+        return None
 
-    # TODO : Option de 0 pour annuler :P
     bNeedSelectMenu = True
     numContainer=1
     while bNeedSelectMenu :
+        numContainer =  1
         for oneContainer in lstContainer:
             # TODO avoir un meilleur formatage 
             # TODO avoir un visualisation de la date plutot que le unix timestamp
@@ -86,12 +93,33 @@ def f_select_container(cliDocker,PrefixContainerName):
         ContainerNumSelected = int(input())
         if ContainerNumSelected == 0:
             bNeedSelectMenu = False
+            print ("You cancel selection ")
             return None
         elif ContainerNumSelected >= 1 and ContainerNumSelected < numContainer  :
             return lstContainer[ContainerNumSelected - 1]["Names"]
 
 
 # END f_select_container
+
+def f_stop_container(cliDocker,ContainerName):
+    """
+        TODO : ajout doc f_stop_container 
+    """    
+
+    cliDocker.stop(ContainerName)
+
+# END f_stop_container(cliDocker,ContainerName):
+
+def f_destroy_container(cliDocker,ContainerName):
+    """
+        TODO : ajout doc f_stop_container 
+    """    
+
+    cliDocker.remove_container(container=ContainerName,force=True)
+
+# END f_destroy_container(cliDocker,ContainerName):
+
+
 
 ##################
 ####   MAIN   ####
@@ -113,7 +141,6 @@ for opt, arg in opts:
     elif opt in ("-d", "--destroy"):
         # argument = arg # nothing here :D
         WANT_DELETE=True
-        raise NotImplementedError("Not yep implemented  :P ")
 
 
 # Load configuration file
@@ -133,13 +160,18 @@ except :
 cliDocker = f_connect_dockerhost()
 ClientUsername=getpass.getuser()
 PrefixContainerName=ClientUsername+"-Linux202_"
-ContainerName=f_select_container(cliDocker,PrefixContainerName)
+showUpAndDown=WANT_DELETE
+ContainerName=f_select_container(cliDocker,PrefixContainerName,showUpAndDown)
 
 if ContainerName == None:
-    print ("You cancel selection ")
     exit (1)
 else:
-    raise NotImplementedError("Not yep implemented  :P ")
+    if WANT_DELETE:
+        f_destroy_container(cliDocker,ContainerName)
+        print ("Container : " + ContainerName + " is DESTROY")
+    else:
+        f_stop_container(cliDocker,ContainerName)
+        print ("Container : " + ContainerName + " is STOP ")
     # remove_container
     # stop
  

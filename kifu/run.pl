@@ -114,11 +114,15 @@ def f_select_container(cliDocker,PrefixContainerName):
             myContainer['Status'] = container['Status']
             lstContainer.append(myContainer)
 
+    if len(lstContainer) == 0 :
+        print ("No container for Linux202 actually available")
+        return None
 
     # TODO : Option de 0 pour annuler :P
     bNeedSelectMenu = True
     numContainer=1
     while bNeedSelectMenu :
+        numContainer=1
         for oneContainer in lstContainer:
             # TODO avoir un meilleur formatage 
             # TODO avoir un visualisation de la date plutot que le unix timestamp
@@ -130,6 +134,7 @@ def f_select_container(cliDocker,PrefixContainerName):
         ContainerNumSelected = int(input())
         if ContainerNumSelected == 0:
             bNeedSelectMenu = False
+            print ("You cancel selection ")
             return None
         elif ContainerNumSelected >= 1 and ContainerNumSelected < numContainer  :
             return lstContainer[ContainerNumSelected - 1]["Names"]
@@ -215,7 +220,6 @@ if SELECT:
     PrefixContainerName=ClientUsername+"-Linux202_"
     ContainerName=f_select_container(cliDocker,PrefixContainerName)
     if ContainerName == None:
-        print ("You cancel selection ")
         exit (1)
     
 # Je conserve la double validation de la presence du container au cas ou le container
@@ -223,7 +227,7 @@ if SELECT:
 (bContainerFound,ContainerID) = f_search_container_name(cliDocker,ContainerName)
 
 if bContainerFound:
-    if DONTASK == False:
+    #if DONTASK == False:
         #TODO a ajouter
         # ContainerName = f_ask_create_new_container_or_reuse(ContainerID)
 
