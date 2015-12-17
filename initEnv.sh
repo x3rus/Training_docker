@@ -170,11 +170,12 @@ f_clone_docker_training() {
     cd $GITCLONE_DOCKERS
     COMMIT_VERSION=$(git log --pretty=oneline | head -1 | cut -d " " -f 1)
 
-    if [ $COMMIT_VERSION != $GIT_LAST_COMMIT ] ; then
-        f_show_msg "error" "La version utiliser ne correpond pas a celle attendu "
-        f_show_msg "info" "Valider avec le formateur que vous avez la bonne version "
-        return 1
-    fi
+#    TODO : pas convaincu de la pertinence et cause problème pour le moment 
+#    if [ $COMMIT_VERSION != $GIT_LAST_COMMIT ] ; then
+#        f_show_msg "error" "La version utiliser ne correpond pas a celle attendu "
+#        f_show_msg "info" "Valider avec le formateur que vous avez la bonne version "
+#        return 1
+#    fi
     cd $ORIGNAL_DIR
 
     return 0
