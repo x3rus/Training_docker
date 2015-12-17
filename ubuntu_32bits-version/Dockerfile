@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM i686/ubuntu
 MAINTAINER Boutry Thomas 'thomas.boutry@x3rus.com'
 
 # install apps 

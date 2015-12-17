@@ -1,4 +1,6 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+#
 #
 # Description : Script to stop and delete the docker container for the Training
 # linux 202

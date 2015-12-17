@@ -219,6 +219,23 @@ f_clean_up_tmp(){
     return 0
 
 } # FIN f_clean_up_tmp
+
+
+f_install_py_libs(){
+
+  LST_LIB_2_INSTALL="docker-py configobj"
+  RETURN_CODE=0
+
+  for lib2install in $LST_LIB_2_INSTALL ; do
+    f_show_msg "debug" "Installation de $lib2install"
+    sudo pip install $lib2install
+    if [ $? -ne 0 ] ; then
+      f_show_msg "error" "Problème avec la librairie $lib2install , on continue  "
+      RETURN_CODE=1
+    fi
+  done
+} # f_install_py_libs
+
 ##########
 ## MAIN ##
 ##########
@@ -273,6 +290,16 @@ else
     fi
 fi
 
+#################################
+# Installation de requis python #
+#################################
+f_show_msg "info" "Nous allons proceder à l'installation de librairie python requis par les scripts avec pip"
+
+f_install_py_libs
+if [ $? -ne 0 ] ; then
+  f_show_msg "error" "Problème lors de l'installation des librairy python est survenu !"
+  f_show_msg "error" "Nous continuons mais les scripts python risque d'avoir un problème "
+fi
 
 ######################################
 # CheckOut des containers et scripts #

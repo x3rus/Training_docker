@@ -1,4 +1,5 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 #
 # Description : Build Docker from the DockerFile
 #   
