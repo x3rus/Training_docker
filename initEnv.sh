@@ -90,6 +90,14 @@ f_install_docker(){
         fi
     fi
 
+    f_show_msg "info" "Ajout de l'utilisateur dans le group docker"
+    sudo usermod -aG docker $USER 
+    if [ $? -ne 0 ]; then
+        f_show_msg "error" "Problème lors de l'ajout de l'utilisateur dans le group docker"
+    fi
+
+    
+    
     f_show_msg "extrainfo" "Docker devrait être installer a cette étape "
     return 0
 } # END f_install_docker 
@@ -227,6 +235,11 @@ f_install_py_libs(){
   LST_LIB_2_INSTALL="docker-py configobj"
   RETURN_CODE=0
 
+  sudo apt-get install python-pip
+  if [ $? -ne ] ;then
+    f_show_msg "error" "Impossible d'installer python-pip :-/ , le script continue mais faudra voir le probleme"
+    return 1
+  fi
   for lib2install in $LST_LIB_2_INSTALL ; do
     f_show_msg "debug" "Installation de $lib2install"
     sudo pip install $lib2install
@@ -318,6 +331,13 @@ fi
 ######################################
 f_show_msg "extrainfo" "Téléchargement du container "
 
+# Switch primagy group a docker pour l'opération ceci evite d'avoir un logout / login a faire
+newgrp docker
+if [ $? -ne 0 ]; then
+    f_show_msg "error" "Impossible de switché sous le groupe docker il est possible que le groupe existe pas"
+    f_show_msg "error" "La suite risque de donner des erreurs a valider"
+fi
+
 f_pull_container
 if [ $? -ne 0 ] ;then
     f_show_msg "error" "Problème lors de la récupération du containers , voir avec le formateur"
@@ -337,5 +357,7 @@ if [ $? -ne 0 ] ;then
 fi
 
 f_show_msg "info" "TERMINE"
+
+f_show_msg "info" "SVP Faire un Logout  / Logout pour que tous soit parfait au niveau des groupe "
 
 exit 0
