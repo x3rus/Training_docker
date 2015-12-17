@@ -14,7 +14,7 @@ DOCKER_DIR=$HOME/Linux202/
 DOCKER_DIR_tmp=$HOME/Linux202/tmp
 GITHUB_DOCKERS=https://github.com/x3rus/Training_docker.git
 GITCLONE_DOCKERS=$DOCKER_DIR/Training_docker
-GIT_LAST_COMMIT="dc2eeee47517aa3af43a8254339eac75c09fcaa5" #extraction git log --pretty=oneline | head -1 | cut -d " " -f 1
+GIT_LAST_COMMIT="4e6fdb3e9dd5a507e34565c0da940dc257236a4d" #extraction git log --pretty=oneline | head -1 | cut -d " " -f 1
 CONTAINER_X3="x3rus/linux202:base" 
 
 VERBOSE=0
