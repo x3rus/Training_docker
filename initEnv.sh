@@ -242,7 +242,7 @@ f_install_py_libs(){
   fi
   for lib2install in $LST_LIB_2_INSTALL ; do
     f_show_msg "debug" "Installation de $lib2install"
-    sudo pip install -y $lib2install
+    sudo pip install $lib2install
     if [ $? -ne 0 ] ; then
       f_show_msg "error" "Problème avec la librairie $lib2install , on continue  "
       RETURN_CODE=1
