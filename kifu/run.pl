@@ -240,7 +240,7 @@ else:
                                  detach=True,
                                  name=ContainerName,
                              )
-    start_output=cliDocker.start(container_Linux202)
+    start_output=cliDocker.start(container_Linux202,privileged=True)
 
 print ("Start Container name : " + ContainerName + " from img : " + ImageNameFull)
 ContainerIpAdd = f_get_ipAddr_container(cliDocker,ContainerName)

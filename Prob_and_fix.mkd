@@ -1,0 +1,42 @@
+# Description de problème
+
+
+## Problème d'affichage X
+
+### application-specific initialization failed: no display name and no $DISPLAY environment variable
+
+    $ gitk 
+    application-specific initialization failed: no display name and no $DISPLAY environment variable
+    Error in startup script: no display name and no $DISPLAY environment variable
+    while executing
+    "load /usr/lib/i386-linux-gnu/libtk8.6.so Tk"
+    ("package ifneeded Tk 8.6.1" script)
+    invoked from within
+    "package require Tk"
+    (file "/usr/bin/gitk" line 10)
+
+
+
+### BadAccess (attempt to access private resource denied)
+
+Après avoir fait mon ssh -X bob@172.17.0.2 .
+Quand je démarre une application graphique j'ai un message de ce type :
+
+exemple pour **gitk**
+
+    $ gitk
+    X Error of failed request:  BadAccess (attempt to access private resource denied)
+    Major opcode of failed request:  18 (X_ChangeProperty)
+    Serial number of failed request:  12
+    Current serial number in output stream:  15
+
+#### Solution
+
+Modifier la configuration de votre SSH client ( PAS dans le docker) mais le client Linux, pour ceci :
+
+    $ cat ~/.ssh/config
+    Host *
+        ForwardX11Trusted yes
+
+Rétablir la connexion SSH ca devrait être bon :D
+
