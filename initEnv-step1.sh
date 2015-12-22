@@ -326,38 +326,7 @@ if [ $? -ne 0 ] ;then
     exit 1
 fi
 
-######################################
-#       Download le container        #
-######################################
-f_show_msg "extrainfo" "Téléchargement du container "
-
-# Switch primagy group a docker pour l'opération ceci evite d'avoir un logout / login a faire
-newgrp docker
-if [ $? -ne 0 ]; then
-    f_show_msg "error" "Impossible de switché sous le groupe docker il est possible que le groupe existe pas"
-    f_show_msg "error" "La suite risque de donner des erreurs a valider"
-fi
-
-f_pull_container
-if [ $? -ne 0 ] ;then
-    f_show_msg "error" "Problème lors de la récupération du containers , voir avec le formateur"
-    exit 1
-fi
-
-######################################
-#      Fin et un petit clean up      #
-######################################
-
-f_show_msg "extrainfo" "On arrive a la fin , un clean up pour terminer"
-
-f_clean_up_tmp 
-if [ $? -ne 0 ] ;then
-    f_show_msg "error" "problème lors de la suppression de fichier temporaire "
-    exit 1
-fi
-
-f_show_msg "info" "TERMINE"
-
-f_show_msg "info" "SVP Faire un Logout  / Logout pour que tous soit parfait au niveau des groupe "
+f_show_msg "Info" "SVP faire un logout / login afin que les groupes s'applique convenablement et executer le script ./initEnv-step2.sh" 
+f_show_msg "Info" "MERCI"
 
 exit 0

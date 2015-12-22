@@ -42,6 +42,13 @@ COPY conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN echo "\n UseDNS no" >> /etc/ssh/sshd_config && \
         sed -e 's/PrintLastLog yes/PrintLastLog no/' -i /etc/ssh/sshd_config
 
+# Set locale
+RUN locale-gen en_CA.UTF-8
+ENV LC_ALL en_CA.UTF-8
+ENV LANG en_CA.UTF-8 
+ENV LANGUAGE en_CA:en
+RUN dpkg-reconfigure locales
+
 EXPOSE 22
 CMD ["/usr/bin/supervisord"]
 
