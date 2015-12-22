@@ -36,6 +36,9 @@ RUN useradd -s /bin/bash -m  bob && \
     echo "bob:toto" | chpasswd && \
     usermod -G sudo bob
 
+# Create sSh directory to be able to start ssh
+RUN mkdir -p /var/run/sshd
+
 COPY conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Remove DNS validation for ssh
