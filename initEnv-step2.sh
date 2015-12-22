@@ -139,12 +139,6 @@ done
 ######################################
 f_show_msg "extrainfo" "Téléchargement du container "
 
-# Switch primagy group a docker pour l'opération ceci evite d'avoir un logout / login a faire
-newgrp docker
-if [ $? -ne 0 ]; then
-    f_show_msg "error" "Impossible de switché sous le groupe docker il est possible que le groupe existe pas"
-    f_show_msg "error" "La suite risque de donner des erreurs a valider"
-fi
 
 f_pull_container
 if [ $? -ne 0 ] ;then
