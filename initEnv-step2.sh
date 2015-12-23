@@ -160,7 +160,6 @@ fi
 
 f_show_msg "info" "TERMINE"
 
-f_show_msg "info" "SVP Faire un Logout  / Logout pour que tous soit parfait au niveau des groupe "
 
 exit 0
 
