@@ -235,7 +235,7 @@ f_install_py_libs(){
   LST_LIB_2_INSTALL="docker-py configobj"
   RETURN_CODE=0
 
-  sudo apt-get install -y python-pip
+  sudo apt-get install -y python-pip python3 python3-docker python3-configobj
   if [ $? -ne 0 ] ;then
     f_show_msg "error" "Impossible d'installer python-pip :-/ , le script continue mais faudra voir le probleme"
     return 1
