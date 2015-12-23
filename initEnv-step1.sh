@@ -326,7 +326,7 @@ if [ $? -ne 0 ] ;then
     exit 1
 fi
 
-f_show_msg "Info" "SVP faire un logout / login afin que les groupes s'applique convenablement et executer le script ./initEnv-step2.sh" 
-f_show_msg "Info" "MERCI"
+f_show_msg "info" "SVP faire un logout / login afin que les groupes s'applique convenablement et executer le script ./initEnv-step2.sh" 
+f_show_msg "info" "MERCI"
 
 exit 0
